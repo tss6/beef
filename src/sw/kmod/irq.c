@@ -1,4 +1,3 @@
-#include "kmod.h"
 #include "magic.h"
 #include "mmio.h"
 #include "irq.h"
@@ -18,8 +17,35 @@ static irqreturn_t beef_handler_buf_avail(int irq, void *data)
     return IRQ_HANDLED;
 }
 
+static irqreturn_t beef_handler_shoe(int irq, void *data)
+{
+    struct pci_dev *pdev = (struct pci_dev *)data;
+    dev_notice(&pdev->dev, "shoe!\n");
+    beef_reg_write(pci_get_drvdata(pdev), BEEF_INT, BEEF_INT_SHOE);
+    return IRQ_HANDLED;
+}
+
+static irqreturn_t beef_handler_hat(int irq, void *data)
+{
+    struct pci_dev *pdev = (struct pci_dev *)data;
+    dev_notice(&pdev->dev, "hat!\n");
+    beef_reg_write(pci_get_drvdata(pdev), BEEF_INT, BEEF_INT_HAT);
+    return IRQ_HANDLED;
+}
+
+static irqreturn_t beef_handler_banana(int irq, void *data)
+{
+    struct pci_dev *pdev = (struct pci_dev *)data;
+    dev_notice(&pdev->dev, "banana!\n");
+    beef_reg_write(pci_get_drvdata(pdev), BEEF_INT, BEEF_INT_BANANA);
+    return IRQ_HANDLED;
+}
+
 static irqreturn_t (*const handlers[__beef_int_count])(int, void*) = {
-    beef_handler_buf_avail
+    beef_handler_buf_avail,
+    beef_handler_shoe,
+    beef_handler_hat,
+    beef_handler_banana,
 };
 
 static void beef_irq_free(struct pci_dev *pdev, int i)

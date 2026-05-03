@@ -37,6 +37,15 @@ static void beef_mmio_write(void *opaque, hwaddr addr, uint64_t data, unsigned s
         return;
     }
 
+    if (idx == BEEF_IRQ_RAISE) {
+        if (data >= __beef_int_count) {
+            beef_log("irq_raise: invalid vector %"PRIu64"\n", data);
+            return;
+        }
+        beef_irq_raise(opaque, data);
+        return;
+    }
+
     /* if writing to the cmd register, trigger the op requested */
     if (idx == BEEF_CMD){
         switch(data) {
