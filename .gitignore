@@ -1,0 +1,11 @@
+qemu/build/
+qemu/hw/beef/
+src/sw/kmod/*.o
+src/sw/kmod/*.ko
+src/sw/kmod/*.mod
+src/sw/kmod/*.mod.c
+src/sw/kmod/*.order
+src/sw/kmod/*.symvers
+src/sw/kmod/.tmp_versions/
+src/sw/kmod/compile_commands.json
+compile_commands.json
