@@ -19,24 +19,27 @@ all: qemu kmod
 
 # copy hw source into qemu tree
 $(HW_DST): $(wildcard $(HW_SRC)/*)
-	cp -r $(HW_SRC) $(HW_DST)
+	rsync -a --delete $(HW_SRC)/ $(HW_DST)/
 
 
 # patch to add device paths
-qemu-patch: $(HW_DST)
+.qemu-patch: $(HW_DST)
 	grep -q "subdir('beef')" $(QEMU_SRC)/hw/meson.build || echo "subdir('beef')" >> $(QEMU_SRC)/hw/meson.build
 	grep -q "source beef/Kconfig" $(QEMU_SRC)/hw/Kconfig || echo "source beef/Kconfig" >> $(QEMU_SRC)/hw/Kconfig
 	grep -q "CONFIG_BEEF" $(QEMU_SRC)/configs/devices/x86_64-softmmu.mak || \
 		echo "CONFIG_BEEF=y" >> $(QEMU_SRC)/configs/devices/x86_64-softmmu.mak
+	touch $@
 
 
 # configure (only if no build/)
-$(QEMU_BUILD)/build.ninja: qemu-patch
-	mkdir -p $(QEMU_BUILD)
-	cd $(QEMU_BUILD) && ../configure \
-		--target-list=$(TARGET_LIST) \
-		--enable-debug \
-		--extra-cflags="-I$(INCLUDE_DIR)"
+$(QEMU_BUILD)/build.ninja: .qemu-patch
+	@if [ ! -f $@ ]; then \
+		mkdir -p $(QEMU_BUILD); \
+		cd $(QEMU_BUILD) && ../configure \
+			--target-list=$(TARGET_LIST) \
+			--enable-debug \
+			--extra-cflags="-I$(INCLUDE_DIR)"; \
+	fi
 
 # build
 qemu: $(QEMU_BUILD)/build.ninja
@@ -49,16 +52,23 @@ qemu: $(QEMU_BUILD)/build.ninja
 kmod:
 	$(MAKE) -C $(KMOD_DIR) EXTRA_CFLAGS="-I$(INCLUDE_DIR)"
 
+
 # VM
 
 run: qemu
 	$(QEMU_BUILD)/qemu-system-x86_64 \
-		-drive file=$(VM_IMAGE),format=qcow2 \
+		-M q35 \
+		-accel kvm \
+		-smp $(NPROC) \
+		-m 2G \
+		-boot c \
+		-drive file=$(VM_IMAGE),format=qcow2,if=virtio,cache=writeback \
+		-netdev user,id=net0,hostfwd=tcp::2222-:22 \
+		-device virtio-net-pci,netdev=net0 \
 		-device beef \
-		-enable-kvm \
-		-m 1G \
 		-nographic \
-		$(QEMU_EXTRA)
+		-serial mon:stdio \
+		-D qemu-debug.log
 
 
 # merge compile_commands

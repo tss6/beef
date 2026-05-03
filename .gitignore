@@ -9,3 +9,6 @@ src/sw/kmod/*.symvers
 src/sw/kmod/.tmp_versions/
 src/sw/kmod/compile_commands.json
 compile_commands.json
+.qemu-patch
+qemu-debug.log
+dev-cont
