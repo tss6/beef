@@ -6,7 +6,7 @@ INCLUDE := $(shell realpath $(PWD)/../../../include)
 
 all:
 	make -j$(shell nproc) -C $(KDIR) M=$(PWD) EXTRA_CFLAGS="-I$(INCLUDE)" modules
-	# $(MAKE) tidy
+	$(MAKE) tidy
 
 clean:
 	make -C $(KDIR) M=$(PWD) clean
@@ -16,6 +16,7 @@ tidy:
 		! -name '*.c' \
 		! -name '*.h' \
 		! -name '*.ko' \
+		! -name '.clangd' \
 		! -name 'compile_commands.json' \
 		! -name 'Makefile' \
 		-delete

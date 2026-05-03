@@ -4,7 +4,8 @@ HW_SRC      := src/hw
 HW_DST      := $(QEMU_SRC)/hw/beef
 KMOD_DIR    := src/sw/kmod
 VM_IMAGE    := deb13.qcow2
-INCLUDE_DIR := $(abspath include)
+ROOT        := $(abspath .)
+INCLUDE_DIR := $(ROOT)/include
 NPROC       := $(shell nproc)
 TARGET_LIST := x86_64-softmmu
 
@@ -76,7 +77,8 @@ compile_commands: qemu kmod
 	jq -s '[.[][]]' \
 		$(QEMU_BUILD)/compile_commands.json \
 		$(KMOD_DIR)/compile_commands.json \
-		> compile_commands.json
+	| jq 'map(if .file | startswith("../hw/beef/") then .file |= sub("../hw/beef/"; "$(ROOT)/src/hw/") else . end)' \
+	  > compile_commands.json
 
 clean:
 	$(MAKE) -C $(KMOD_DIR) clean
