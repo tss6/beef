@@ -1,8 +1,10 @@
 #include "irq.h"
+#include "beef_enums.h"
 #include "hw/pci/msi.h"
 
 void beef_irq_init(BeefState *dev, Error **errp)
 {
+    beef_log("going to initialize msi, int_count=%d\n", __beef_int_count);
     if (msi_init(&dev->pdev, 0, __beef_int_count, true, false, errp))
         beef_log("failed to init msi\n");
     beef_log("irq initialized\n");

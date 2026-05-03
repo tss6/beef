@@ -52,7 +52,7 @@ static void beef_irq_free(struct pci_dev *pdev, int i)
 {
     int irqn;
     while (--i >= 0)
-         if ((irqn = pci_irq_vector(pdev, i)) >= 0)
+         if ((irqn = pci_irq_vector(pdev, i)) > 0)
             free_irq(irqn, pdev);
 }
 

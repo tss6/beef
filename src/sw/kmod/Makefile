@@ -1,5 +1,5 @@
 obj-m += beef.o
-beef-objs += kmod.o mmio.o irq.o dma.o
+beef-objs += kmod.o mmio.o irq.o dma.o fops.o chrdev.o
 KDIR    := /lib/modules/6.12.74+deb13+1-cloud-amd64/build
 PWD     := $(shell pwd)
 INCLUDE := $(shell realpath $(PWD)/../../../include)

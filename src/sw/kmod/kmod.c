@@ -3,6 +3,7 @@
 #include "mmio.h"
 #include "dma.h"
 #include "irq.h"
+#include "chrdev.h"
 
 /* runs on each matching device found */
 static int beef_probe(struct pci_dev *pdev, const struct pci_device_id *id)
@@ -25,6 +26,7 @@ static int beef_probe(struct pci_dev *pdev, const struct pci_device_id *id)
     /* dont forget to set mestre do onibus for dma */
     pci_set_master(pdev);
 
+    run_check(dev, beef_chrdev_create(pdev), err_beef_chrdev_enable);
     run_check(dev, beef_mmio_enable(pdev), err_beef_mmio_enable);
     run_check(dev, beef_irq_enable(pdev), err_beef_irq_enable);
     run_check(dev, beef_dma_enable(pdev), err_beef_dma_enable);
@@ -40,6 +42,9 @@ err_beef_irq_enable:
     beef_mmio_disable(pdev);
 
 err_beef_mmio_enable:
+    beef_chrdev_destroy(pdev);
+
+err_beef_chrdev_enable:
     pci_disable_device(pdev);
 
 err_pci_enable_device:
@@ -59,6 +64,7 @@ static void beef_remove(struct pci_dev *pdev)
     beef_irq_disable(pdev);
     beef_dma_free(pdev);
     beef_mmio_disable(pdev);
+    beef_chrdev_destroy(pdev);
     pci_disable_device(pdev);
     beef_data_free(pci_get_drvdata(pdev));
     pci_set_drvdata(pdev, NULL);
@@ -80,9 +86,20 @@ static struct pci_driver beef_driver = {
     .remove = beef_remove,
 };
 
-/* used when _init and _exit do nothing besides registering, reducing
- * boilerplate. idk if i will use any so i will leave it here as an
- * idea for later...
- *
- * i used it lol */
-module_pci_driver(beef_driver);
+static int __init beef_init(void)
+{
+    int err;
+    if ((err = beef_chrdev_init()))
+        return err;
+    return pci_register_driver(&beef_driver);
+}
+
+static void __exit beef_exit(void)
+{
+    pci_unregister_driver(&beef_driver);
+    beef_chrdev_deinit();
+}
+
+/* we go back to init and exit */
+module_init(beef_init);
+module_exit(beef_exit);

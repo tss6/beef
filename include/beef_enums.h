@@ -1,6 +1,10 @@
 #ifndef BEEF_ENUMS_H
 #define BEEF_ENUMS_H
 
+#ifndef __KERNEL__
+#include <stdint.h>
+#endif
+
 #define BEEF_HW_NAME   "beef"
 #define BEEF_VENDOR_ID 0xbeef
 #define BEEF_DEVICE_ID 0x0001
@@ -30,6 +34,19 @@ enum beef_irqs {
     BEEF_INT_HAT,
     BEEF_INT_BANANA,
     __beef_int_count
+};
+
+/* operations implemented in beef's ioctl chrdev */
+enum beef_ioctls {
+    BEEF_IOCTL_REG_WRITE,
+    BEEF_IOCTL_REG_READ,
+    __beef_ioctl_count
+};
+
+/* what userspace passes/gets from ioctl methods */
+struct beef_ioc_reg {
+    uint32_t reg;
+    uint64_t val;
 };
 
 #endif /* BEEF_ENUMS_H */
