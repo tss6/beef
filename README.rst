@@ -15,8 +15,8 @@ Structure
      `-- src
          |--- hw             # qemu device implementation
           `-- sw
-             |--- kmod       # linux kernel driver
-              `-- uspace     # userspace test programs
+              |--- kmod      # linux kernel driver
+               `-- uspace    # userspace test programs
 
 Overview
 --------
@@ -35,7 +35,7 @@ Building
 --------
 
 QEMU has the dependencies listed `here
-<https://www.qemu.org/docs/master/devel/build-environment.html>`_
+<https://www.qemu.org/docs/master/devel/build-environment.html>`_.
 
 to build qemu::
 

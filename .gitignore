@@ -12,3 +12,4 @@ compile_commands.json
 .qemu-patch
 qemu-debug.log
 dev-cont
+*.qcow2
