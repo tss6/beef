@@ -6,6 +6,7 @@ src/sw/kmod/*.mod
 src/sw/kmod/*.mod.c
 src/sw/kmod/*.order
 src/sw/kmod/*.symvers
+src/sw/kmod/.cache/
 src/sw/kmod/.tmp_versions/
 src/sw/kmod/compile_commands.json
 compile_commands.json
@@ -13,3 +14,4 @@ compile_commands.json
 qemu-debug.log
 dev-cont
 *.qcow2
+.cache

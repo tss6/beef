@@ -30,17 +30,6 @@ static int beef_probe(struct pci_dev *pdev, const struct pci_device_id *id)
     run_check(dev, beef_dma_enable(pdev), err_beef_dma_enable);
     run_check(dev, beef_dma_alloc(pdev), err_beef_dma_alloc);
 
-    // 1. write DMA config registers
-    beef_reg_write(data, BEEF_DMA_BASE_ADDR,    data->dma.handle);
-    beef_reg_write(data, BEEF_DMA_REGION_SIZE,  data->dma.size);
-    beef_reg_write(data, BEEF_DMA_BASE_OFFSET,  0);
-    beef_reg_write(data, BEEF_DMA_OP_SIZE,      64);
-    beef_reg_write(data, BEEF_DMA_BUF_OFFSET,   0);
-
-    reinit_completion(&data->dma_done);
-    beef_reg_write(data, BEEF_CMD, BEEF_WRITE);
-    wait_for_completion(&data->dma_done);
-
     dev_notice(dev, "device probed, ok!\n");
     return 0;
 

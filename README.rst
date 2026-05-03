@@ -83,3 +83,6 @@ Notes
 - The KDIR varible is not just ``/lib/modules/$(shell uname -r)/build`` because
   your VM's kernel may be different from your current system's (my case), so i
   decided to pin it for consistency
+
+- ``make compile_commands`` requires a ``compile_commands`` to exist in kmod
+  for the merge. Run ``bear -- make`` in the kmod dir before trying the merge.
