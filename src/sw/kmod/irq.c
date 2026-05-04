@@ -69,7 +69,7 @@ int beef_irq_enable(struct pci_dev *pdev)
     struct device *dev = &pdev->dev;
     int err, i = 0;
 
-    dev_notice(dev, "pci_msi_vec_count: %d\n", pci_msi_vec_count(pdev));
+    dev_notice(dev, "pci_msix_vec_count: %d\n", pci_msix_vec_count(pdev));
     run_check(dev,
         pci_alloc_irq_vectors(pdev, __beef_int_count, __beef_int_count, PCI_IRQ_MSIX),
         err_pci_alloc_irq_vectors
