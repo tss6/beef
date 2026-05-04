@@ -30,8 +30,17 @@ typedef struct BeefState {
     MemoryRegion mmio;
     uint64_t reg[__beef_num_reg];
 
-    uint8_t dma_buf[BEEF_DMA_BUFF_SIZE];
+    /* BAR1 -> table and PBA (pending bit array) for the msix vectors
+     * note: no need for region because we use msix_init_exclusive_bar()
+     * and it just does it... i tried to alloc myself but i get a error
+     * because it is already allocated by something else :p */
+    // MemoryRegion msix;
     bool irq[__beef_int_count];
+
+    uint8_t dma_buf[BEEF_DMA_BUFF_SIZE];
 } BeefState;
+
+#define BEEF_MMIO_BAR_NUM 0
+#define BEEF_MSIX_BAR_NUM 1
 
 #endif /* BEEF_DEVICE_H */

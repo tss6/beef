@@ -25,11 +25,11 @@ Overview
 driver. Made with the goal to understand how PCIe devices, DMA and interrupts
 work internally.
 
-The device exposes a BAR for MMIO registers, supports 64bit DMA and (depending
-on the commit tag) uses either INTx, MSI or MSIx for interrupts. The driver
-allocates a DMA buffer, sets the device registers and may issue commands such
-as to read or write to the device's internal memory. After that, it waits for
-the device to raise a irq to announce completion.
+The device exposes a BAR for MMIO registers, supports 64bit DMA and uses MSIx
+for interrupts. The driver allocates a DMA buffer, sets the device registers
+and may issue commands such as to read or write to the device's internal
+memory. After that, it waits for the device to raise a irq to announce
+completion.
 
 Building
 --------

@@ -8,6 +8,11 @@ all:
 	make -j$(shell nproc) -C $(KDIR) M=$(PWD) EXTRA_CFLAGS="-I$(INCLUDE)" modules
 	$(MAKE) tidy
 
+compile_commands:
+	bear -- make -j$(shell nproc) -C $(KDIR) M=$(PWD) EXTRA_CFLAGS="-I$(INCLUDE)" modules
+	sleep 1
+	$(MAKE) tidy
+
 clean:
 	make -C $(KDIR) M=$(PWD) clean
 

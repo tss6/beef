@@ -2,7 +2,6 @@
 #include "dma.h"
 #include "irq.h"
 
-#define BEEF_MMIO_BAR_NUM 0
 #define BEEF_MMIO_SIZE 4096
 #define BEEF_MMIO_ACCESS_EXP 3
 #define BEEF_MMIO_ACCESS_SIZE (1<<BEEF_MMIO_ACCESS_EXP)
@@ -87,10 +86,12 @@ const MemoryRegionOps beef_mmio_ops = {
 
 void beef_mmio_init(BeefState *dev, Error **errp)
 {
-  memory_region_init_io(&dev->mmio, OBJECT(dev), &beef_mmio_ops, dev,
-                        BEEF_MMIO_NAME, BEEF_MMIO_SIZE);
-  pci_register_bar(&dev->pdev, BEEF_MMIO_BAR_NUM,
-                   PCI_BASE_ADDRESS_SPACE_MEMORY, &dev->mmio);
+    memory_region_init_io(&dev->mmio, OBJECT(dev), &beef_mmio_ops, dev,
+                          BEEF_MMIO_NAME, BEEF_MMIO_SIZE);
+    pci_register_bar(&dev->pdev, BEEF_MMIO_BAR_NUM,
+                     PCI_BASE_ADDRESS_SPACE_MEMORY, &dev->mmio);
+
+    /* BAR1 is initialized inside irq.c via msix_init_exclusive_bar() */
 
   beef_log("mmio initialized\n");
 }
